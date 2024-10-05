@@ -1,6 +1,10 @@
 import "./App.css";
-import Login from "./components/Login/Login";
 import { useState, useEffect } from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+
+// components
+import Login from "./components/Login/Login";
+import Dashboard from "./components/Dashboard/Dashboard";
 
 function App() {
   const [isLoggedin, setIsLoggedin] = useState(false);
@@ -23,7 +27,19 @@ function App() {
   }, []);
 
   return (
-    <>{isLoggedin ? <h1>Welcome to the Protected Page!</h1> : <Login />}</>
+    <>
+      <Router>
+        <Routes>
+          <Route
+            path="/"
+            element={
+              isLoggedin ? <h1>Welcome to the Protected Page!</h1> : <Login />
+            }
+          />
+          <Route path="/dashboard" element={ <Dashboard /> } />
+        </Routes>
+      </Router>
+    </>
   );
 }
 

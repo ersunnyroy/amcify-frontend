@@ -1,7 +1,26 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+
 
 const Login = () => {
-  document.body.classList.add("login-page", "bg-body-secondary");
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    // Add the default class to the body
+    document.body.classList.add("login-page", "bg-body-secondary");
+
+    // Clean up by removing the class when the component unmounts
+    return () => {
+      document.body.classList.remove("login-page", "bg-body-secondary");
+    };
+  }, []);
+
+  const onLogin = (e) => {
+    e.preventDefault();
+    // Navigate to the dashboard after successful login
+    navigate("/dashboard", { replace: true });
+  };
+
   return (
     <>
       <div className="login-box">
@@ -18,7 +37,7 @@ const Login = () => {
           </div>
           <div className="card-body login-card-body">
             <p className="login-box-msg">Sign in to start your session</p>
-            <form method="post">
+            <form onSubmit={onLogin} method="post">
               <div className="input-group mb-1">
                 <div className="form-floating">
                   <input
@@ -53,7 +72,8 @@ const Login = () => {
                   <div className="form-check">
                     <input
                       className="form-check-input"
-                      type="checkbox" id="flexCheckDefault"
+                      type="checkbox"
+                      id="flexCheckDefault"
                     />
                     <label
                       className="form-check-label"
@@ -75,11 +95,10 @@ const Login = () => {
               </div>
               {/*end::Row*/}
             </form>
-            
+
             <p className="mb-1">
               <a href="">I forgot my password</a>
             </p>
-           
           </div>
           {/* /.login-card-body */}
         </div>
@@ -88,4 +107,4 @@ const Login = () => {
   );
 };
 
-export default Login;   
+export default Login;
