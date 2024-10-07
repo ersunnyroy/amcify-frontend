@@ -1,24 +1,55 @@
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-
+import { useState, useEffect } from "react"
+import { useNavigate } from "react-router-dom"
+import api from "../../config/axios"
 
 const Login = () => {
-  const navigate = useNavigate();
+  const navigate = useNavigate()
 
   useEffect(() => {
     // Add the default class to the body
-    document.body.classList.add("login-page", "bg-body-secondary");
+    document.body.classList.add("login-page", "bg-body-secondary")
 
     // Clean up by removing the class when the component unmounts
     return () => {
-      document.body.classList.remove("login-page", "bg-body-secondary");
-    };
-  }, []);
+      document.body.classList.remove("login-page", "bg-body-secondary")
+    }
+  }, [])
 
-  const onLogin = (e) => {
-    e.preventDefault();
-    // Navigate to the dashboard after successful login
-    navigate("/dashboard", { replace: true });
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const [error, setError] = useState("")
+
+  const onLogin = async (e) => {
+    e.preventDefault()
+    // // Navigate to the dashboard after successful login
+    // navigate("/dashboard", { replace: true })
+    try {
+      const response = await api.post("login", {
+        email: email,
+        password: password,
+      })
+
+      if (response.status) {
+        // Assuming the API response contains a token and user data
+        const { data } = response.data
+
+        // Store the token and user in localStorage (or context, depending on your app structure)
+        localStorage.setItem("token", data.token)
+        localStorage.setItem("user", JSON.stringify(data.user))
+
+        // Redirect to the dashboard or another protected route
+        navigate("/dashboard")
+      } else {
+        setError(response.message)
+      }
+    } catch (err) {
+      setError("Invalid email or password")
+      setShowToast(true)
+    }
+  }
+
+  const handleCloseToast = () => {
+    setError(null); // Clear the error message
   };
 
   return (
@@ -37,6 +68,7 @@ const Login = () => {
           </div>
           <div className="card-body login-card-body">
             <p className="login-box-msg">Sign in to start your session</p>
+            <p className={`alert alert-danger ${error ? 'show' : 'd-none'}`}>{error}</p>
             <form onSubmit={onLogin} method="post">
               <div className="input-group mb-1">
                 <div className="form-floating">
@@ -44,7 +76,7 @@ const Login = () => {
                     id="loginEmail"
                     type="email"
                     className="form-control"
-                    placeholder
+                    onChange={(e) => setEmail(e.target.value)}
                   />
                   <label htmlFor="loginEmail">Email</label>
                 </div>
@@ -57,8 +89,8 @@ const Login = () => {
                   <input
                     id="loginPassword"
                     type="password"
+                    onChange={(e) => setPassword(e.target.value)}
                     className="form-control"
-                    placeholder
                   />
                   <label htmlFor="loginPassword">Password</label>
                 </div>
@@ -104,7 +136,7 @@ const Login = () => {
         </div>
       </div>
     </>
-  );
-};
+  )
+}
 
-export default Login;
+export default Login

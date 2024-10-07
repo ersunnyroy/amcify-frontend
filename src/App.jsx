@@ -1,13 +1,12 @@
 import "./App.css";
 import { useState, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-
+import PrivateRoute from "./components/Common/PrivateRoute";
 // components
 import Login from "./components/Login/Login";
 import Dashboard from "./components/Dashboard/Dashboard";
 
 function App() {
-  const [isLoggedin, setIsLoggedin] = useState(false);
   useEffect(() => {
     // Add the default class to the body
     document.body.classList.add(
@@ -30,13 +29,15 @@ function App() {
     <>
       <Router>
         <Routes>
+          <Route path="/" element={<Login />} />
           <Route
-            path="/"
+            path="/dashboard"
             element={
-              isLoggedin ? <h1>Welcome to the Protected Page!</h1> : <Login />
+              <PrivateRoute>
+                <Dashboard />
+              </PrivateRoute>
             }
           />
-          <Route path="/dashboard" element={ <Dashboard /> } />
         </Routes>
       </Router>
     </>
